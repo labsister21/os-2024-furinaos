@@ -19,7 +19,7 @@ LFLAGS        = -T $(SOURCE_FOLDER)/linker.ld -melf_i386
 
 
 run: all
-	@qemu-system-i386 -s -cdrom $(ISO_NAME).iso
+	@qemu-system-i386 -s -cdrom $(OUTPUT_FOLDER)/$(ISO_NAME).iso
 all: build
 build: iso
 clean:
@@ -48,7 +48,7 @@ iso: kernel
 		-input-charset utf8        \
 		-quiet                     \
 		-boot-info-table           \
-		-o OS2024.iso              \
+		-o $(OUTPUT_FOLDER)/OS2024.iso \
 		$(OUTPUT_FOLDER)/iso
 	@rm -r $(OUTPUT_FOLDER)/iso/
 
