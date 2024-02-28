@@ -7,14 +7,38 @@
  */
 struct GlobalDescriptorTable global_descriptor_table = {
     .table = {
-        {
-            // TODO : Implement
+        [0] = {
+            .segment_low = 0,
+            .base_low = 0,
+            .base_mid = 0,
+            .type_bit = 0,
+            .non_system = 0,
+            .descriptor_privillege_level = 0,
+            .segment_present = 0,
+            .segment_mid = 0,
+            .avl = 0,
+            .L = 0,
+            .D_B = 0,
+            .granularity = 0,
+            .base_high = 0
         },
-        {
-            // TODO : Implement
+        [1] = {
+            .segment_low = 0xFFFFF,
+            .base_low = 0,
+            .base_mid = 0,
+            .type_bit = 0xA,
+            .non_system = 1,
+            .descriptor_privillege_level = 0,
+            .segment_present = 1,
+            .segment_mid = 0,
+            .avl = 0,
+            .L = 0,
+            .D_B = 1,
+            .granularity = 1,
+            .base_high = 0
         },
-        {
-            // TODO : Implement
+        [2] = {
+            
         }
     }
 };

@@ -38,11 +38,14 @@ struct SegmentDescriptor {
     uint8_t segment_present : 1;
 
     // Last 16-bit (Bit 48 to 63)
-    uint8_t segment_limit : 4;
+    uint8_t segment_mid : 4;
+
+    // THESE ARE FLAGS
     uint8_t avl : 1;
     uint8_t L : 1;
     uint8_t D_B : 1;
     uint8_t granularity : 1;
+
     uint8_t base_high;
 
 
