@@ -2,6 +2,7 @@
     "debug.onTaskErrors": "debugAnyway",
     "files.associations": {
         "gdt.h": "c",
-        "kernel-entrypoint.h": "c"
+        "kernel-entrypoint.h": "c",
+        "stddef.h": "c"
     },
 }
