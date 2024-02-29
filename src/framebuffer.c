@@ -28,7 +28,7 @@ void framebuffer_clear(void) {
     //         FRAMEBUFFER_MEMORY_OFFSET[i * 80 + j] = clear;
     //     }
     // }
-    uint16_t clear = 0x00 | (0x00 << 8);
+    uint16_t clear = 0x00 | (0x07 << 8);
     for(int i = 0; i < 25; i++){
         memset(FRAMEBUFFER_MEMORY_OFFSET + i*80, clear, 160);
     }
