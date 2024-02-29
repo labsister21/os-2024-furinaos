@@ -36,7 +36,13 @@ struct IDTGate {
     uint16_t segment_selector;
 
     // Last 32-bit for Trap Gate
-    uint8_t reserved1 : 5;
+    uint8_t _reserved: 5 ;
+    uint8_t _r_bit_1 : 3 ;
+    uint8_t _r_bit_2 : 3 ;
+    uint8_t gate_32  : 1 ;
+    uint8_t _r_bit_3 : 1 ;
+    uint8_t dpl; 
+    uint8_t valid_bit; 
 
     // TODO :   Implement
 } __attribute__((packed));
@@ -47,8 +53,10 @@ struct IDTGate {
  *
  * ...
  */
-// TODO : Implement
-// ...
+struct InterruptDescriptorTable {
+    struct IDTGate table[IDT_MAX_ENTRY_COUNT];
+} __attribute__((packed));
+
 
 /**
  * IDTR, carrying information where's the IDT located and size.
@@ -56,10 +64,10 @@ struct IDTGate {
  *
  * ...
  */
-// TODO : Implement
-// ...
-
-
+struct IDTR {
+    uint16_t                     size;
+    struct InterruptDescriptorTable *address;
+} __attribute__((packed));
 
 /**
  * Set IDTGate with proper interrupt handler values.
