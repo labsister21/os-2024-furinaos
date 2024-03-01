@@ -37,16 +37,8 @@ void pic_remap(void) {
 }
 
 void main_interrupt_handler(struct InterruptFrame frame) {
-
-    struct CPURegister unused_cpu __attribute__((unused)) = frame.cpu;
-    struct InterruptStack unused_stack __attribute__((unused)) = frame.int_stack;
-    
     switch (frame.int_number) {
         // TODO : Implement
-        case PIC1_OFFSET + IRQ_KEYBOARD:
-            // WAIT UNTIL KEYBOARD DRIVER IS DONE 
-            // CALL keyboard_isr() AFTER IT'S COMPLETE   
-            break;
     }
 }
 
