@@ -2,7 +2,6 @@
 #include "../header/cpu/gdt.h"
 
 struct InterruptDescriptorTable interrupt_descriptor_table;
-void *isr_stub_table[ISR_STUB_TABLE_LIMIT];
 struct IDTR _idt_idtr = {
     .size = sizeof(interrupt_descriptor_table) -1,
     .address = &interrupt_descriptor_table
@@ -20,7 +19,7 @@ void initialize_idt(void) {
      * Privilege: 0
      */
     for(int i = 0; i < ISR_STUB_TABLE_LIMIT; i++){
-        set_interrupt_gate(i, isr_stub_table[i], GDT_KERNEL_CODE_SEGMENT_SELECTOR, 1);
+        set_interrupt_gate(i, isr_stub_table[i], GDT_KERNEL_CODE_SEGMENT_SELECTOR, 0);
     }
 
     __asm__ volatile("lidt %0" : : "m"(_idt_idtr));
