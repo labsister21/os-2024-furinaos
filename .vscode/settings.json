@@ -3,6 +3,9 @@
     "files.associations": {
         "gdt.h": "c",
         "kernel-entrypoint.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "idt.h": "c",
+        "interrupt.h": "c",
+        "keyboard.h": "c"
     },
 }

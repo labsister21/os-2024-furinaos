@@ -1,5 +1,10 @@
-#include "header/cpu/idt.h"
-#include "header/cpu/gdt.h"
+#include "../header/cpu/idt.h"
+#include "../header/cpu/gdt.h"
+#include "../header/stdlib/string.h"
+
+struct InterruptDescriptorTable interrupt_descriptor_table;
+void *isr_stub_table[ISR_STUB_TABLE_LIMIT];
+struct IDTR _idt_idtr;
 
 void initialize_idt(void) {
     /* 
@@ -12,7 +17,6 @@ void initialize_idt(void) {
      * Segment: GDT_KERNEL_CODE_SEGMENT_SELECTOR
      * Privilege: 0
      */
-
     for(int i = 0; i < ISR_STUB_TABLE_LIMIT; i++){
         set_interrupt_gate(i, isr_stub_table[i], GDT_KERNEL_CODE_SEGMENT_SELECTOR, 0);
     }
@@ -30,7 +34,16 @@ void set_interrupt_gate(
     struct IDTGate *idt_int_gate = &interrupt_descriptor_table.table[int_vector];
     // TODO : Set handler offset, privilege & segment
     // Use &-bitmask, bitshift, and casting for offset 
+    // Set handler offset
+    uint32_t handler_addr = (uint32_t)handler_address;
+    idt_int_gate->offset_low = handler_addr & 0xFFFF;
+    idt_int_gate->offset_mid = (handler_addr >> 16) & 0xFFFF;
 
+    // Set privilege
+    idt_int_gate->dpl = privilege;
+
+    // Set segment selector
+    idt_int_gate->segment = gdt_seg_selector;
     // Target system 32-bit and flag this as valid interrupt gate
     idt_int_gate->_r_bit_1    = INTERRUPT_GATE_R_BIT_1;
     idt_int_gate->_r_bit_2    = INTERRUPT_GATE_R_BIT_2;

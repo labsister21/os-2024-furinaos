@@ -1,5 +1,7 @@
-#include "header/cpu/interrupt.h"
-#include "header/cpu/portio.h"
+#include "../header/cpu/interrupt.h"
+#include "../header/cpu/portio.h"
+#include "../header/text/framebuffer.h"
+
 void io_wait(void) {
     out(0x80, 0);
 }
@@ -35,7 +37,19 @@ void pic_remap(void) {
 }
 
 void main_interrupt_handler(struct InterruptFrame frame) {
+
+    struct CPURegister unused_cpu __attribute__((unused)) = frame.cpu;
+    struct InterruptStack unused_stack __attribute__((unused)) = frame.int_stack;
+    
     switch (frame.int_number) {
         // TODO : Implement
+        case PIC1_OFFSET + IRQ_KEYBOARD:
+            // WAIT UNTIL KEYBOARD DRIVER IS DONE 
+            // CALL keyboard_isr() AFTER IT'S COMPLETE   
+            break;
     }
+}
+
+void activate_keyboard_interrupt(void) {
+    out(PIC1_DATA, in(PIC1_DATA) & ~(1 << IRQ_KEYBOARD));
 }
