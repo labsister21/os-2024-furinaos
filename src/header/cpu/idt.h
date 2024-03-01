@@ -33,16 +33,17 @@ extern struct IDTR _idt_idtr;
 struct IDTGate {
     // First 32-bit (Bit 0 to 31)
     uint16_t offset_low;
-    uint16_t segment_selector;
+    uint16_t segment;
 
-    // Last 32-bit for Trap Gate
+    // Next 32-bit 
     uint8_t _reserved: 5 ;
     uint8_t _r_bit_1 : 3 ;
     uint8_t _r_bit_2 : 3 ;
     uint8_t gate_32  : 1 ;
     uint8_t _r_bit_3 : 1 ;
-    uint8_t dpl; 
-    uint8_t valid_bit; 
+    uint8_t dpl : 1; 
+    uint8_t valid_bit : 1; 
+    uint16_t offset_mid; 
 
 } __attribute__((packed));
 
