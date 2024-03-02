@@ -6,6 +6,9 @@
         "stddef.h": "c",
         "idt.h": "c",
         "interrupt.h": "c",
-        "keyboard.h": "c"
+        "keyboard.h": "c",
+        "portio.h": "c",
+        "framebuffer.h": "c",
+        "string.h": "c"
     },
 }

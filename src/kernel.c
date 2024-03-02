@@ -12,18 +12,8 @@ void kernel_setup(void) {
     activate_keyboard_interrupt();
     initialize_idt();
     framebuffer_clear();
+	makeFurina();
     framebuffer_write(0, 0, '\0', 0xF, 0);
     framebuffer_set_cursor(0, 0);
-    int col = 0;
-    //int col_cursor =1;
     keyboard_state_activate();
-    while (true) {
-      char c;
-      get_keyboard_buffer(&c);
-      if(c != '\0'){
-        framebuffer_write(0, col++, c, 0xF, 0);
-        framebuffer_write(0, col, '\0', 0xF, 0);
-        framebuffer_set_cursor(0,col);
-      }
-    }
 }

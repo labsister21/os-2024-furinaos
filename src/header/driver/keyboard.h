@@ -54,4 +54,5 @@ void get_keyboard_buffer(char *buf);
  */
 void keyboard_isr(void);
 
+void makeFurina(void);
 #endif
