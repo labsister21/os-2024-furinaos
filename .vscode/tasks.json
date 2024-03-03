@@ -45,6 +45,16 @@
             "type": "shell",
             "label": "Exit QEMU",
             "command": "pkill -f qemu || test $? -eq 1"
+        },
+        {
+            "type": "shell",
+            "label": "Run QEMU with Disk",
+            "command": "qemu-system-i386 -s -S -drive file=storage.bin,format=raw,if=ide,index=0,media=disk -cdrom OS2024.iso",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "problemMatcher": []
         }
     ],
 }

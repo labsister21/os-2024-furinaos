@@ -5,6 +5,8 @@
 #include "header/kernel-entrypoint.h"
 #include "header/text/framebuffer.h"
 #include "header/driver/keyboard.h"
+#include "header/driver/disk.h"
+#include "header/filesystem/fat32.h"
 
 void kernel_setup(void) {
     load_gdt(&_gdt_gdtr);
@@ -12,8 +14,10 @@ void kernel_setup(void) {
     activate_keyboard_interrupt();
     initialize_idt();
     framebuffer_clear();
-	makeFurina();
-    framebuffer_write(0, 0, '\0', 0xF, 0);
     framebuffer_set_cursor(0, 0);
-    keyboard_state_activate();
+
+    struct BlockBuffer b;
+    for (int i = 0; i < 512; i++) b.buf[i] = i % 16;
+    write_blocks(&b, 17, 1);
+    while (true);
 }
