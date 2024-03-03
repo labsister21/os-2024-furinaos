@@ -8,6 +8,7 @@
 uint8_t NEWLINE_POS = 0;
 uint8_t COLUMN = 0;
 uint8_t FURINA_OFFSET = 22;
+uint8_t COL_TABLE[25];
 
 struct KeyboardDriverState keyboard_state = {
     .keyboard_input_on = false
@@ -39,6 +40,7 @@ void keyboard_isr(void) {
         uint8_t ascii = (char) keyboard_scancode_1_to_ascii_map[scancode];
 
         if(ascii == '\n'){
+            COL_TABLE[NEWLINE_POS] = COLUMN;
             COLUMN = 0;
             NEWLINE_POS++;
             framebuffer_set_cursor(NEWLINE_POS, COLUMN);
@@ -56,8 +58,12 @@ void keyboard_isr(void) {
             if(COLUMN != 0){
                 framebuffer_set_cursor(NEWLINE_POS, (COLUMN--)-1);
                 framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
-
-                // TODO : Implement multi row deletion
+            }
+            else{
+                NEWLINE_POS--;
+                framebuffer_set_cursor(NEWLINE_POS, COL_TABLE[NEWLINE_POS]);
+                framebuffer_write(NEWLINE_POS, COL_TABLE[NEWLINE_POS], '\0', 0xF, 0);
+                COLUMN = COL_TABLE[NEWLINE_POS];
             }
         }
         else{
@@ -67,6 +73,7 @@ void keyboard_isr(void) {
                 framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
                 framebuffer_set_cursor(NEWLINE_POS,COLUMN);
                 if(COLUMN > 80){
+                    COL_TABLE[NEWLINE_POS] = 79;
                     NEWLINE_POS++;
                     COLUMN = 0;
                 }
