@@ -9,6 +9,10 @@
         "keyboard.h": "c",
         "portio.h": "c",
         "framebuffer.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "stdbool.h": "c",
+        "stdint.h": "c",
+        "fat32.h": "c",
+        "typeinfo": "c"
     },
 }

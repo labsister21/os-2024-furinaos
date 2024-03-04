@@ -37,7 +37,9 @@ const char keyboard_scancode_1_to_ascii_map[256] = {
 void keyboard_isr(void) {
     if(keyboard_state.keyboard_input_on){
         uint8_t scancode = (uint8_t) in(KEYBOARD_DATA_PORT);
-        uint8_t ascii = (char) keyboard_scancode_1_to_ascii_map[scancode];
+        keyboard_state.keyboard_buffer = (char) keyboard_scancode_1_to_ascii_map[scancode];
+        char ascii;
+        get_keyboard_buffer(&ascii);
 
         if(ascii == '\n'){
             COL_TABLE[NEWLINE_POS] = COLUMN;
@@ -67,7 +69,6 @@ void keyboard_isr(void) {
             }
         }
         else{
-            keyboard_state.keyboard_buffer = ascii;
             if(ascii != '\0'){
                 framebuffer_write(NEWLINE_POS, COLUMN++, ascii, 0xF, 0);
                 framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
@@ -79,9 +80,9 @@ void keyboard_isr(void) {
                 }
     	}
         }
-        pic_ack(IRQ_KEYBOARD + PIC1_OFFSET);
+    pic_ack(IRQ_KEYBOARD + PIC1_OFFSET);
 
-        return;
+    return;
     }
 }
 
