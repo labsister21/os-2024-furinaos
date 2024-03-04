@@ -247,4 +247,6 @@ int8_t write(struct FAT32DriverRequest request);
  */
 int8_t deleteFAT32(struct FAT32DriverRequest request);
 
+struct FAT32DirectoryEntry *dir_table_seq_search (char *name, char *ext, uint32_t parent_dir_cluster);
+
 #endif

@@ -1,7 +1,5 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include <stddef.h>
-#include "../header/stdlib/string.h"
 #include "../header/filesystem/fat32.h"
 
 const uint8_t fs_signature[BLOCK_SIZE] = {
@@ -84,97 +82,80 @@ void read_clusters(void *ptr, uint32_t cluster_number, uint8_t cluster_count){
     read_blocks(ptr, cluster_to_lba(cluster_number), cluster_count*CLUSTER_BLOCK_COUNT);
 }
 
-int8_t read_directory(struct FAT32DriverRequest request){
-    struct FAT32DirectoryTable dir_table = fat32_driver_state.dir_table_buf ;
-    uint32_t counter = 3; // Check from Cluster 3 after root dir 
-    uint8_t i;
-    uint32_t pos = 0; 
+struct FAT32DirectoryEntry *dir_table_seq_search(char *name, char *ext, uint32_t parent_dir_cluster) {
+    while (parent_dir_cluster != FAT32_FAT_END_OF_FILE) {
+        read_clusters(&fat32_driver_state.dir_table_buf.table, parent_dir_cluster, 1);
 
-    // Find cluster position on the table  
-    while(counter != FAT32_FAT_END_OF_FILE){
-        bool isSameName = true;
-        for(i = 0; i < 8; i++){
-            if(dir_table.table[counter].name[i] != request.name[i]){
-                isSameName = false;
+        // Iterate through the directory table
+        for (int32_t i = 0; i < (int32_t)(CLUSTER_SIZE / sizeof(struct FAT32DirectoryEntry)); i++) {
+            // If we find a directory entry with matching name and ext, return its index
+            if (memcmp(fat32_driver_state.dir_table_buf.table[i].name, name, 8) == 0 &&
+                memcmp(fat32_driver_state.dir_table_buf.table[i].ext, ext, 3) == 0 &&
+                fat32_driver_state.dir_table_buf.table[i].user_attribute == UATTR_NOT_EMPTY) {
+                return fat32_driver_state.dir_table_buf.table + i;
             }
         }
-        if(isSameName) {
-            pos = counter; 
-        }
-        counter++;
+
+    } 
+
+    return 0;
+}
+
+int8_t read_directory(struct FAT32DriverRequest request){
+    struct FAT32DirectoryEntry *entry_p = dir_table_seq_search(request.name, request.ext, request.parent_cluster_number);
+    struct FAT32DirectoryEntry dir_entry = *entry_p;
+
+    if(entry_p == 0){
+        return 2; 
+    }
+    else if(dir_entry.attribute != ATTR_SUBDIRECTORY){
+        return 1; 
     }
 
-    // not found 
-    if(!pos){
-        return 2;
-    }
+    uint32_t cluster_number = (dir_entry.cluster_high << 16) | dir_entry.cluster_low; 
 
-    // not a directory 
-    if(dir_table.table[counter].attribute != ATTR_SUBDIRECTORY){
-        return 1;
-    }
-
-    // Success
-    if (pos) {
-        read_clusters(request.buf, pos, 1);
+    if(cluster_number){
+        read_clusters(request.buf, cluster_number, 1);
         return 0;
     }
 
-    return -1;
+    else{
+        return -1; 
+    }
 }
 
 int8_t read(struct FAT32DriverRequest request){
-    struct FAT32DirectoryTable dir_table = fat32_driver_state.dir_table_buf ;
-    uint32_t counter = request.parent_cluster_number;
-    uint8_t i;
-    uint32_t pos = 0; 
+    struct FAT32DirectoryEntry *entry_p = dir_table_seq_search(request.name, request.ext, request.parent_cluster_number);
+    struct FAT32DirectoryEntry dir_entry = *entry_p;
 
-    // Find position of the cluster
-    while(counter != FAT32_FAT_END_OF_FILE && pos != counter){
-        bool isSameName = true;
-        for(i = 0; i < 8; i++){
-            if(dir_table.table[counter].name[i] != request.name[i]){
-                isSameName = false;
-            }
-        }
-
-        if(isSameName) {
-            for(i =0 ; i < 3; i++){
-                if(dir_table.table[counter].ext[i] != request.ext[i]){
-                    isSameName = false; 
-                }
-            } 
-        }
-
-        if(isSameName){
-            pos = counter; 
-        }
-
-        else {
-            counter++;
-        }
+    if(entry_p == 0){
+        return 2; 
+    }
+    else if(dir_entry.attribute == ATTR_SUBDIRECTORY){
+        return 1; 
     }
 
-    // Not Found 
-    if(!pos){
-        return 2;
+    else if( dir_entry.filesize > request.buffer_size){
+        return -1; 
     }
 
-    // Not a File (a directory)
-    else if(dir_table.table[pos].attribute == ATTR_SUBDIRECTORY){
-        return 1;
-    }
+    uint32_t cluster_number = (dir_entry.cluster_high << 16) | dir_entry.cluster_low; 
 
-    // Success
-    else if (pos) {
-        read_clusters(request.buf, pos, 1);
+    if(cluster_number){
+        while(cluster_number != FAT32_FAT_END_OF_FILE){
+            read_clusters(request.buf, cluster_number, 1);
+            request.buf++; 
+            cluster_number = fat32_driver_state.fat_table.cluster_map[cluster_number];
+        }
+
         return 0;
     }
 
-    else if(dir_table.table[pos].filesize > request.buffer_size){
-        return -1;
-    }
-    else {
+    else{
         return -1; 
     }
+}
+
+int8_t write (struct FAT32DriverRequest request){
+
 }
