@@ -85,15 +85,12 @@ void read_clusters(void *ptr, uint32_t cluster_number, uint8_t cluster_count){
 }
 
 int8_t read_directory(struct FAT32DriverRequest request){
-    
-}
-
-int8_t read(struct FAT32DriverRequest request){
     struct FAT32DirectoryTable dir_table = fat32_driver_state.dir_table_buf ;
-    uint32_t counter = request.parent_cluster_number;
+    uint32_t counter = 3; // Check from Cluster 3 after root dir 
     uint8_t i;
     uint32_t pos = 0; 
 
+    // Find cluster position on the table  
     while(counter != FAT32_FAT_END_OF_FILE){
         bool isSameName = true;
         for(i = 0; i < 8; i++){
@@ -107,18 +104,77 @@ int8_t read(struct FAT32DriverRequest request){
         counter++;
     }
 
+    // not found 
     if(!pos){
         return 2;
     }
 
+    // not a directory 
     if(dir_table.table[counter].attribute != ATTR_SUBDIRECTORY){
         return 1;
     }
 
+    // Success
     if (pos) {
         read_clusters(request.buf, pos, 1);
         return 0;
     }
 
     return -1;
+}
+
+int8_t read(struct FAT32DriverRequest request){
+    struct FAT32DirectoryTable dir_table = fat32_driver_state.dir_table_buf ;
+    uint32_t counter = request.parent_cluster_number;
+    uint8_t i;
+    uint32_t pos = 0; 
+
+    // Find position of the cluster
+    while(counter != FAT32_FAT_END_OF_FILE && pos != counter){
+        bool isSameName = true;
+        for(i = 0; i < 8; i++){
+            if(dir_table.table[counter].name[i] != request.name[i]){
+                isSameName = false;
+            }
+        }
+
+        if(isSameName) {
+            for(i =0 ; i < 3; i++){
+                if(dir_table.table[counter].ext[i] != request.ext[i]){
+                    isSameName = false; 
+                }
+            } 
+        }
+
+        if(isSameName){
+            pos = counter; 
+        }
+
+        else {
+            counter++;
+        }
+    }
+
+    // Not Found 
+    if(!pos){
+        return 2;
+    }
+
+    // Not a File (a directory)
+    else if(dir_table.table[pos].attribute == ATTR_SUBDIRECTORY){
+        return 1;
+    }
+
+    // Success
+    else if (pos) {
+        read_clusters(request.buf, pos, 1);
+        return 0;
+    }
+
+    else if(dir_table.table[pos].filesize > request.buffer_size){
+        return -1;
+    }
+    else {
+        return -1; 
+    }
 }
