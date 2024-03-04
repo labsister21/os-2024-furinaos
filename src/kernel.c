@@ -16,7 +16,7 @@ void kernel_setup(void) {
     framebuffer_clear();
     framebuffer_set_cursor(0, 0);
     makeFurina();
-    // init_directory_table();
+    initialize_filesystem_fat32();
 
     struct BlockBuffer b;
     for (int i = 0; i < 512; i++) b.buf[i] = i % 16;

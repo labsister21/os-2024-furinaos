@@ -85,36 +85,40 @@ void read_clusters(void *ptr, uint32_t cluster_number, uint8_t cluster_count){
 }
 
 int8_t read_directory(struct FAT32DriverRequest request){
-    struct FAT32DirectoryTable *dir_table = (struct FAT32DirectoryTable *)request.buf;
-    bool saem = true;
+    
+}
 
-    read_clusters(dir_table, request.parent_cluster_number, 1);
+int8_t read(struct FAT32DriverRequest request){
+    struct FAT32DirectoryTable dir_table = fat32_driver_state.dir_table_buf ;
+    uint32_t counter = request.parent_cluster_number;
+    uint8_t i;
+    uint32_t pos = 0; 
 
-    for(int i = 0; i < 8; i++){
-        if(dir_table->table[0].name[i] != request.name[i]){
-            saem = false;
+    while(counter != FAT32_FAT_END_OF_FILE){
+        bool isSameName = true;
+        for(i = 0; i < 8; i++){
+            if(dir_table.table[counter].name[i] != request.name[i]){
+                isSameName = false;
+            }
         }
+        if(isSameName) {
+            pos = counter; 
+        }
+        counter++;
     }
 
-    if(!saem){
+    if(!pos){
         return 2;
     }
 
-    if(dir_table->table[0].attribute != ATTR_SUBDIRECTORY){
+    if(dir_table.table[counter].attribute != ATTR_SUBDIRECTORY){
         return 1;
     }
 
-    if(request.parent_cluster_number){
+    if (pos) {
+        read_clusters(request.buf, pos, 1);
         return 0;
     }
 
     return -1;
 }
-
-// int8_t read(struct FAT32DriverRequest request){
-//     struct FAT32DirectoryTable *dir_table = (struct FAT32DirectoryTable *) request.buf;
-//     // bool found = false;
-
-//     read_clusters(dir_table, request.parent_cluster_number, 1);
-//     // HOW THE FUCKKKKKKKKK
-// }
