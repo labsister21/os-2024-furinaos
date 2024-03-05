@@ -311,6 +311,38 @@ int8_t write (struct FAT32DriverRequest request){
 
     return -1;
     // TODO : Implement Error 1 & 2 
-    
 
+
+}
+
+int8_t deleteFAT32(struct FAT32DriverRequest request){
+    struct FAT32DirectoryEntry *entry_p = dir_table_seq_search(request.name, request.ext, request.parent_cluster_number);
+    struct FAT32DirectoryTable dir_table;
+    int i;
+    // Not found
+    if(entry_p == 0){
+        return 1;
+    }
+
+    // Check if entry is a directory
+    if(entry_p->attribute == ATTR_SUBDIRECTORY){
+        // Check if it's empty
+        read_clusters(&dir_table, (entry_p->cluster_high << 16) | entry_p->cluster_low, 1);
+        for(i = 0; i < CLUSTER_SIZE/sizeof(struct FAT32DirectoryEntry); i++){
+            if(dir_table.table[i].name[0] != 0){
+                return 2; // Folder not empty
+            }
+        }
+    }
+
+    uint32_t cluster = entry_p->cluster_low | (entry_p->cluster_high << 16);
+    while (cluster != FAT32_FAT_END_OF_FILE) {
+        uint32_t next_cluster = fat32_driver_state.fat_table.cluster_map[cluster];
+        fat32_driver_state.fat_table.cluster_map[cluster] = FAT32_FAT_EMPTY_ENTRY;
+        cluster = next_cluster;
+    }
+
+    // Write the updated directory table back to the disk
+    write_clusters(&dir_table, request.parent_cluster_number, 1);
+    return 0; // Success
 }
