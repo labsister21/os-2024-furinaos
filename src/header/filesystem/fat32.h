@@ -45,9 +45,6 @@ struct ClusterBuffer {
 } __attribute__((packed));
 
 
-
-
-
 /* -- FAT32 Data Structures -- */
 
 /**
@@ -247,6 +244,18 @@ int8_t write(struct FAT32DriverRequest request);
  */
 int8_t deleteFAT32(struct FAT32DriverRequest request);
 
+/* --CRUD Extra Operation-- */ 
+
+/*
+ * @param *name array of char with name of file 
+ * @param *ext array of char with name of extension 
+ * @parent_dir_cluster 
+ * @param parent_cluster_number is target directory table to read,
+ */
 struct FAT32DirectoryEntry *dir_table_seq_search (char *name, char *ext, uint32_t parent_dir_cluster);
+
+int8_t add_entry(struct FAT32DriverRequest request, uint32_t cluster_number);
+
+uint32_t extend_dir_table(uint32_t dir_cluster_number);
 
 #endif
