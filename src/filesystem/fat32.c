@@ -38,7 +38,7 @@ void init_directory_table(struct FAT32DirectoryTable *dir_table, char *name, uin
     }
 
     dir_table->table[1].attribute = ATTR_SUBDIRECTORY;
-    dir_table->table[1].attribute = UATTR_NOT_EMPTY;
+    dir_table->table[1].user_attribute = UATTR_NOT_EMPTY;
     dir_table->table[1].cluster_low = parent_dir_cluster;
 }
 
@@ -231,11 +231,11 @@ int8_t write (struct FAT32DriverRequest request){
         return 1; 
     }
 
-    struct FAT32DirectoryEntry entry = *entry_p; 
+    // struct FAT32DirectoryEntry entry = *entry_p; 
 
     // Write a directory
     if (request.buffer_size == 0) {
-        uint32_t empty_cluster_number = 3;
+        uint32_t empty_cluster_number = 4;
         uint32_t current_fat_cluster;
 
         // Loop until find an empty entry
@@ -318,7 +318,7 @@ int8_t write (struct FAT32DriverRequest request){
 int8_t deleteFAT32(struct FAT32DriverRequest request){
     struct FAT32DirectoryEntry *entry_p = dir_table_seq_search(request.name, request.ext, request.parent_cluster_number);
     struct FAT32DirectoryTable dir_table;
-    int i;
+    uint32_t i;
     // Not found
     if(entry_p == 0){
         return 1;
@@ -344,5 +344,7 @@ int8_t deleteFAT32(struct FAT32DriverRequest request){
 
     // Write the updated directory table back to the disk
     write_clusters(&dir_table, request.parent_cluster_number, 1);
-    return 0; // Success
+    return 0;
+
+    // TODO : Implement return -1
 }
