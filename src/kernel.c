@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 #include "header/cpu/gdt.h"
 #include "header/cpu/idt.h"
 #include "header/cpu/interrupt.h"
@@ -32,12 +33,12 @@ void kernel_setup(void) {
     request.name[5] = 'i';
     request.name[6] = 'l';
     request.name[7] = 'e';
-    // request.ext[0] = 't';
-    // request.ext[1] = 'x';
-    // request.ext[2] = 't';
+    request.ext[0] = '\0';
+    request.ext[1] = '\0';
+    request.ext[2] = '\0';
     request.parent_cluster_number = ROOT_CLUSTER_NUMBER;
     request.buffer_size = 0;
-
+	/* write_clusters("nata de coco", 2, 1); */
     // uint8_t hentai[512];
     // for(int i = 0; i < 512; i++){
     //     hentai[i] = i%16;
@@ -45,9 +46,9 @@ void kernel_setup(void) {
 
     // request.buf = hentai;
 
-    char c = (char) write(request);
+    //makeFurina();
 
-    framebuffer_write(20, 20, c, 15, 0);
+    uint8_t test = write(&request);
+	framebuffer_write(9, 9, test, 0, 0);
 
-    while(true);
 }
