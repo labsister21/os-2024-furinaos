@@ -10,7 +10,7 @@ ISO_NAME      = OS2024
 DISK_NAME      = storage
 
 # Flags
-WARNING_CFLAG = -Wall -Wextra 
+WARNING_CFLAG = -Wall -Wextra -Werror
 DEBUG_CFLAG   = -fshort-wchar -g
 STRIP_CFLAG   = -nostdlib -fno-stack-protector -nostartfiles -nodefaultlibs -ffreestanding
 CFLAGS        = $(DEBUG_CFLAG) $(WARNING_CFLAG) $(STRIP_CFLAG) -m32 -c -I$(SOURCE_FOLDER)
@@ -22,7 +22,7 @@ LFLAGS        = -T $(SOURCE_FOLDER)/linker.ld -melf_i386
 run: all
 	@qemu-system-i386 -s -drive file=$(OUTPUT_FOLDER)/storage.bin,format=raw,if=ide,index=0,media=disk -cdrom $(OUTPUT_FOLDER)/$(ISO_NAME).iso
 all: build
-build: iso disk
+build: iso
 clean:
 	rm -rf *.o *.iso $(OUTPUT_FOLDER)/kernel
 

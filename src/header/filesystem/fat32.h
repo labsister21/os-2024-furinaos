@@ -216,7 +216,7 @@ void read_clusters(void *ptr, uint32_t cluster_number, uint8_t cluster_count);
  *                buffer_size must be exactly sizeof(struct FAT32DirectoryTable)
  * @return Error code: 0 success - 1 not a folder - 2 not found - -1 unknown
  */
-int8_t read_directory(struct FAT32DriverRequest request);
+int8_t read_directory(struct FAT32DriverRequest *request);
 
 
 /**
@@ -225,7 +225,7 @@ int8_t read_directory(struct FAT32DriverRequest request);
  * @param request All attribute will be used for read, buffer_size will limit reading count
  * @return Error code: 0 success - 1 not a file - 2 not enough buffer - 3 not found - -1 unknown
  */
-int8_t read(struct FAT32DriverRequest request);
+int8_t read(struct FAT32DriverRequest *request);
 
 /**
  * FAT32 write, write a file or folder to file system.
@@ -242,7 +242,7 @@ int8_t write(struct FAT32DriverRequest *request);
  * @param request buf and buffer_size is unused
  * @return Error code: 0 success - 1 not found - 2 folder is not empty - -1 unknown
  */
-int8_t deleteFAT32(struct FAT32DriverRequest request);
+int8_t deleteFAT32(struct FAT32DriverRequest *request);
 
 /* --CRUD Extra Operation-- */ 
 
@@ -259,3 +259,7 @@ int8_t add_entry(struct FAT32DriverRequest *request, uint32_t cluster_number);
 uint32_t extend_dir_table(uint32_t dir_cluster_number);
 
 #endif
+
+
+// -- CRUD Helper Function --
+bool isValidDir(uint32_t dir_cluster_number); 
