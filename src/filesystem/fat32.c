@@ -121,8 +121,7 @@ int8_t read_directory(struct FAT32DriverRequest *request){
 }
 
 int8_t read(struct FAT32DriverRequest *request){
-    struct FAT32DirectoryEntry *entry_p = dir_table_seq_search(
-                                                               request->name, request->ext, request->parent_cluster_number);
+    struct FAT32DirectoryEntry *entry_p = dir_table_seq_search(request->name, request->ext, request->parent_cluster_number);
     if(entry_p == 0){
         return 2; 
     }
