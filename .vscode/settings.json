@@ -13,6 +13,7 @@
         "stdbool.h": "c",
         "stdint.h": "c",
         "fat32.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "paging.h": "c"
     },
 }
