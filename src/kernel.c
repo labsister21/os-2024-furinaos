@@ -8,6 +8,7 @@
 #include "header/driver/keyboard.h"
 #include "header/driver/disk.h"
 #include "header/filesystem/fat32.h"
+#include "header/memory/paging.h"
 
 void kernel_setup(void) {
     load_gdt(&_gdt_gdtr);
@@ -17,29 +18,8 @@ void kernel_setup(void) {
     framebuffer_clear();
     framebuffer_set_cursor(0, 0);
     initialize_filesystem_fat32();
-	
-    struct FAT32DriverRequest request;
 
-    request.name[0] = 'k';
-    request.name[1] = 'a';
-    request.name[2] = 'n';
-    request.name[3] = 'o';
-    request.name[4] = '\0';
-    request.name[5] = '\0';
-    request.name[6] = '\0';
-    request.name[7] = '\0';
-    request.ext[0] = '\0';
-    request.ext[1] = '\0';
-    request.ext[2] = '\0';
-    request.parent_cluster_number = ROOT_CLUSTER_NUMBER;
-    request.buffer_size = 16000;
-
-	int8_t result = read(&request);
-	if(result == 0){
-	  makeFurina();
-	};
-
-
-    
-
+    // Test paging
+    paging_allocate_user_page_frame(&_paging_kernel_page_directory, (uint8_t*) 0x600000);
+    *((uint8_t*) 0x500000) = 1;
 }

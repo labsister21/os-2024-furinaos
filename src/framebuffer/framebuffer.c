@@ -17,7 +17,7 @@ void framebuffer_set_cursor(uint8_t r, uint8_t c) {
 void framebuffer_write(uint8_t row, uint8_t col, char c, uint8_t fg, uint8_t bg) {
     uint16_t attrib = (bg << 4) | (fg & 0x0F);
     volatile uint16_t * where;
-    where = ((uint16_t*) 0xB8000) + (row * 80 + col) ;
+    where = ((uint16_t*) FRAMEBUFFER_MEMORY_OFFSET) + (row * 80 + col) ;
     *where = c | (attrib << 8);
 }
 
