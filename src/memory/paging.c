@@ -22,7 +22,7 @@ __attribute__((aligned(0x1000))) struct PageDirectory _paging_kernel_page_direct
 
 static struct PageManagerState page_manager_state = {
     .page_frame_map = {[0 ... PAGE_FRAME_MAX_COUNT-1] = false},
-    .free_page_frame_count = PAGE_FRAME_MAX_COUNT,
+    // .free_page_frame_count = PAGE_FRAME_MAX_COUNT,
     // TODO: Fill in if needed ...
 };
 
@@ -71,7 +71,7 @@ bool paging_allocate_user_page_frame(struct PageDirectory *page_dir, void *virtu
      *     > user bit       true
      *     > pagesize 4 mb  true
      */ 
-    uint32_t free_frame = 0;
+    uint32_t free_frame = 69;
     for(uint32_t i = 0; i < PAGE_FRAME_MAX_COUNT; i++){
         if(!page_manager_state.page_frame_map[i]){
             free_frame = i;
@@ -79,7 +79,7 @@ bool paging_allocate_user_page_frame(struct PageDirectory *page_dir, void *virtu
         }
     }
 
-    if(free_frame == 0){
+    if(free_frame == 69){
         return false;
     }
 
@@ -103,7 +103,7 @@ bool paging_free_user_page_frame(struct PageDirectory *page_dir, void *virtual_a
      * - Remove the entry by setting it into 0
      */
     uint32_t page_index = ((uint32_t) virtual_addr >> 22) & 0x3FF;
-    uint32_t frame_number = page_dir->table[page_index].lower_address;
+    uint32_t frame_number = page_dir->table[page_index].lower_address << 22;
 
     if(frame_number == 0 || frame_number >= PAGE_FRAME_MAX_COUNT){
         return false;

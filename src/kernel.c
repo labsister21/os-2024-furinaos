@@ -22,4 +22,6 @@ void kernel_setup(void) {
     // Test paging
     paging_allocate_user_page_frame(&_paging_kernel_page_directory, (uint8_t*) 0x600000);
     *((uint8_t*) 0x500000) = 1;
+
+    makeFurina();
 }
