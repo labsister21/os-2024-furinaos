@@ -53,6 +53,38 @@ struct GlobalDescriptorTable global_descriptor_table = {
             .granularity = 1,
             .base_high =0
         },
+        [3] = {
+            // User code segment
+            .segment_low = 0xFFFF,
+            .base_low = 0,
+            .base_mid = 0,
+            .type_bit = 0xA,            // Code, not accessed, readable, not conforming
+            .non_system = 1,            // Code segment
+            .descriptor_privillege_level = 0x3,                 // User privilege level
+            .segment_present = 1,               // Segment is valid
+            .segment_mid = 0xF,
+            .avl = 0,
+            .L = 1,                     // 32 bit operand size
+            .D_B = 1,                    // 32 bit code segment
+            .granularity = 1,           // 4KB granularity
+            .base_high = 0
+        },
+        [4] = {
+            // User data segment
+            .segment_low = 0xFFFF,
+            .base_low = 0,
+            .base_mid = 0,
+            .type_bit = 0x2,            // Data, not accessed, writable, direction up
+            .non_system = 1,            // Data segment
+            .descriptor_privillege_level = 0x3,                 // User privilege level
+            .segment_present = 1,               // Segment is valid
+            .segment_mid = 0xF,
+            .avl = 0,
+            .L = 0,
+            .D_B = 1,
+            .granularity = 1,
+            .base_high = 0
+        },
         [5] = {
             .base_high      = (sizeof(struct TSSEntry) & (0xF << 16)) >> 16,
             .segment_low       = sizeof(struct TSSEntry),
@@ -62,7 +94,8 @@ struct GlobalDescriptorTable global_descriptor_table = {
             .non_system        = 0,    // S bit
             .type_bit          = 0x9,
             .descriptor_privillege_level = 0,    // DPL
-            .avl         = 1,    // P bit
+            .segment_present         = 0,    // P bit
+            .avl = 0,
             .D_B        = 1,    // D/B bit
             .L         = 0,    // L bit
             .granularity       = 0,    // G bit

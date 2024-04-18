@@ -233,7 +233,7 @@ int8_t read(struct FAT32DriverRequest *request);
  * @param request All attribute will be used for write, buffer_size == 0 then create a folder / directory
  * @return Error code: 0 success - 1 file/folder already exist - 2 invalid parent cluster - -1 unknown
  */
-int8_t write(struct FAT32DriverRequest *request);
+int8_t write(struct FAT32DriverRequest request);
 
 
 /**

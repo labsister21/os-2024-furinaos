@@ -212,12 +212,12 @@ int8_t add_entry(struct FAT32DriverRequest *request, uint32_t cluster_number) {
     return 0;
 }
 
-int8_t write(struct FAT32DriverRequest *r) {
+int8_t write(struct FAT32DriverRequest r) {
 
     struct FAT32DirectoryEntry *entry_p =
-      dir_table_seq_search(r->name, r->ext, r->parent_cluster_number);
+      dir_table_seq_search(r.name, r.ext, r.parent_cluster_number);
 
-    if(!isValidDir(r->parent_cluster_number)){
+    if(!isValidDir(r.parent_cluster_number)){
         return 2; 
     }
     if(entry_p != 0){
@@ -226,7 +226,7 @@ int8_t write(struct FAT32DriverRequest *r) {
     // struct FAT32DirectoryEntry entry = *entry_p;
 
     // Write a directory
-    if (r->buffer_size == 0) {
+    if (r.buffer_size == 0) {
         uint32_t empty_cluster_number = 3;
         uint32_t current_fat_cluster;
 
@@ -241,13 +241,13 @@ int8_t write(struct FAT32DriverRequest *r) {
             if (current_fat_cluster == FAT32_FAT_EMPTY_ENTRY) {
                 fat32_driver_state.fat_table.cluster_map[empty_cluster_number] =
                     FAT32_FAT_END_OF_FILE;
-                init_directory_table(&fat32_driver_state.dir_table_buf, r->name,
-                                     r->parent_cluster_number);
+                init_directory_table(&fat32_driver_state.dir_table_buf, r.name,
+                                     r.parent_cluster_number);
                 write_clusters(&fat32_driver_state.dir_table_buf,
                                empty_cluster_number, 1);
 
                 // Add entry to parent directory table
-                add_entry(r, empty_cluster_number);
+                add_entry(&r, empty_cluster_number);
                 write_clusters(&fat32_driver_state.fat_table, FAT_CLUSTER_NUMBER,
                                1);
                 return 0;
@@ -257,9 +257,9 @@ int8_t write(struct FAT32DriverRequest *r) {
     }
 
     // Write a File
-    uint32_t remaining_size = r->buffer_size;
+    uint32_t remaining_size = r.buffer_size;
     uint32_t empty_cluster_number = 3;
-    struct ClusterBuffer *buf_p = r->buf;
+    struct ClusterBuffer *buf_p = r.buf;
     uint32_t last_cluster_number = 0;
 
     while (remaining_size > 0) {
@@ -274,7 +274,7 @@ int8_t write(struct FAT32DriverRequest *r) {
                     empty_cluster_number;
             } else {
                 // Add entry to parent directory table
-                add_entry(r, empty_cluster_number);
+                add_entry(&r, empty_cluster_number);
             }
 
             while (fat32_driver_state.fat_table.cluster_map[empty_cluster_number] != FAT32_FAT_EMPTY_ENTRY)
