@@ -88,7 +88,6 @@ struct GlobalDescriptorTable global_descriptor_table = {
         [5] = {
             .base_high      = (sizeof(struct TSSEntry) & (0xF << 16)) >> 16,
             .segment_low       = sizeof(struct TSSEntry),
-            .base_high         = 0,
             .base_mid          = 0,
             .base_low          = 0,
             .non_system        = 0,    // S bit
