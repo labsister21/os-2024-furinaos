@@ -11,6 +11,10 @@
 */ 
 #define GDT_KERNEL_CODE_SEGMENT_SELECTOR 0x8
 #define GDT_KERNEL_DATA_SEGMENT_SELECTOR 0x10
+#define GDT_TSS_SELECTOR               0x28
+
+// Set GDT_TSS_SELECTOR with proper TSS values, accessing _interrupt_tss_entry
+void gdt_install_tss(void);
 
 extern struct GDTR _gdt_gdtr;
 
@@ -32,9 +36,24 @@ struct SegmentDescriptor {
 
     // Next 16-bit (Bit 32 to 47)
     uint8_t base_mid;
+
+    // THESE ARE ACCESS BYTES
     uint8_t type_bit   : 4;
     uint8_t non_system : 1;
-    // TODO : Continue SegmentDescriptor definition
+    uint8_t descriptor_privillege_level : 2;
+    uint8_t segment_present : 1;
+
+    // Last 16-bit (Bit 48 to 63)
+    uint8_t segment_mid : 4;
+
+    // THESE ARE FLAGS
+    uint8_t avl : 1;
+    uint8_t L : 1;
+    uint8_t D_B : 1;
+    uint8_t granularity : 1;
+
+    uint8_t base_high;
+
 
 } __attribute__((packed));
 
