@@ -45,4 +45,8 @@ void framebuffer_set_cursor(uint8_t r, uint8_t c);
  */
 void framebuffer_clear(void);
 
+void putc(char* c, uint32_t color);
+
+void puts(char *str, uint32_t count, uint32_t color);
+
 #endif
