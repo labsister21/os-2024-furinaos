@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "header/filesystem/fat32.h"
-
+#include "header/driver/keyboard.h"
 void syscall_user(uint32_t eax, uint32_t ebx, uint32_t ecx, uint32_t edx) {
     __asm__ volatile("mov %0, %%ebx" : /* <Empty> */ : "r"(ebx));
     __asm__ volatile("mov %0, %%ecx" : /* <Empty> */ : "r"(ecx));
@@ -25,11 +25,14 @@ int main(void) {
     if (retcode == 0)
         syscall_user(6, (uint32_t) "owo\n", 4, 0xF);
 
-    char buf;
+    char buf = '\0';
     syscall_user(7, 0, 0, 0);
     while (true) {
         syscall_user(4, (uint32_t) &buf, 0, 0);
-        syscall_user(5, (uint32_t) &buf, 0xF, 0);
+        if(buf != '\0'){
+            syscall_user(5, (uint32_t) &buf, 0xF, 0);
+        }
+        buf = '\0';
     }
 
     return 0;
