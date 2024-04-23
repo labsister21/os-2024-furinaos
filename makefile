@@ -97,7 +97,6 @@ insert-shell: inserter user-shell
 	@cd $(OUTPUT_FOLDER); ./inserter shell 2 $(DISK_NAME).bin
 
 user:
-	@make disk
 	@make user-shell
 	@make insert-shell
 	@make

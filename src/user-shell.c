@@ -68,6 +68,15 @@ void clear(){
     syscall_user(9, 0, 0, 0);
 }
 
+// void ls(){
+//     struct FAT32DirectoryTable current_table;
+//     struct FAT32DriverRequest request = {
+//         .buf = &current_table,
+//         .ext = "\0\0\0",
+//         .buffer_size = 0,
+//     };
+// }
+
 int main(void) {
     struct ClusterBuffer      cl[2]   = {0};
     struct FAT32DriverRequest request = {
