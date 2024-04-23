@@ -5,10 +5,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-uint8_t NEWLINE_POS = 0;
-uint8_t COLUMN = 0;
+// uint8_t NEWLINE_POS = 0;
+// uint8_t COLUMN = 0;
 uint8_t FURINA_OFFSET = 22;
-uint8_t COL_TABLE[25];
+// uint8_t COL_TABLE[25];
 
 struct KeyboardDriverState keyboard_state = {
     .keyboard_input_on = false
@@ -38,48 +38,48 @@ void keyboard_isr(void) {
     if(keyboard_state.keyboard_input_on){
         uint8_t scancode = (uint8_t) in(KEYBOARD_DATA_PORT);
         keyboard_state.keyboard_buffer = (char) keyboard_scancode_1_to_ascii_map[scancode];
-        char ascii;
-        get_keyboard_buffer(&ascii);
+        // char ascii;
+        // get_keyboard_buffer(&ascii);
 
-        if(ascii == '\n'){
-            COL_TABLE[NEWLINE_POS] = COLUMN;
-            COLUMN = 0;
-            NEWLINE_POS++;
-            framebuffer_set_cursor(NEWLINE_POS, COLUMN);
-            framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
-        }
-        else if(ascii == '\t'){
-            framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
-            framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
-            framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
-            framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
-            framebuffer_set_cursor(NEWLINE_POS, COLUMN);
-            framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
-        }
-        else if(ascii == '\b'){
-            if(COLUMN != 0){
-                framebuffer_set_cursor(NEWLINE_POS, (COLUMN--)-1);
-                framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
-            }
-            else{
-                NEWLINE_POS--;
-                framebuffer_set_cursor(NEWLINE_POS, COL_TABLE[NEWLINE_POS]);
-                framebuffer_write(NEWLINE_POS, COL_TABLE[NEWLINE_POS], '\0', 0xF, 0);
-                COLUMN = COL_TABLE[NEWLINE_POS];
-            }
-        }
-        else{
-            if(ascii != '\0'){
-                framebuffer_write(NEWLINE_POS, COLUMN++, ascii, 0xF, 0);
-                framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
-                framebuffer_set_cursor(NEWLINE_POS,COLUMN);
-                if(COLUMN > 80){
-                    COL_TABLE[NEWLINE_POS] = 79;
-                    NEWLINE_POS++;
-                    COLUMN = 0;
-                }
-    	}
-        }
+        // if(ascii == '\n'){
+        //     COL_TABLE[NEWLINE_POS] = COLUMN;
+        //     COLUMN = 0;
+        //     NEWLINE_POS++;
+        //     framebuffer_set_cursor(NEWLINE_POS, COLUMN);
+        //     framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
+        // }
+        // else if(ascii == '\t'){
+        //     framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
+        //     framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
+        //     framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
+        //     framebuffer_write(NEWLINE_POS, COLUMN++, ' ', 0xF, 0);
+        //     framebuffer_set_cursor(NEWLINE_POS, COLUMN);
+        //     framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
+        // }
+        // else if(ascii == '\b'){
+        //     if(COLUMN != 0){
+        //         framebuffer_set_cursor(NEWLINE_POS, (COLUMN--)-1);
+        //         framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
+        //     }
+        //     else{
+        //         NEWLINE_POS--;
+        //         framebuffer_set_cursor(NEWLINE_POS, COL_TABLE[NEWLINE_POS]);
+        //         framebuffer_write(NEWLINE_POS, COL_TABLE[NEWLINE_POS], '\0', 0xF, 0);
+        //         COLUMN = COL_TABLE[NEWLINE_POS];
+        //     }
+        // }
+        // else{
+        //     if(ascii != '\0'){
+        //         framebuffer_write(NEWLINE_POS, COLUMN++, ascii, 0xF, 0);
+        //         framebuffer_write(NEWLINE_POS, COLUMN, '\0', 0xF, 0);
+        //         framebuffer_set_cursor(NEWLINE_POS,COLUMN);
+        //         if(COLUMN > 80){
+        //             COL_TABLE[NEWLINE_POS] = 79;
+        //             NEWLINE_POS++;
+        //             COLUMN = 0;
+        //         }
+    	// }
+        // }
     pic_ack(IRQ_KEYBOARD + PIC1_OFFSET);
 
     return;
