@@ -1,3 +1,22 @@
 {
     "debug.onTaskErrors": "debugAnyway",
+    "files.associations": {
+        "gdt.h": "c",
+        "kernel-entrypoint.h": "c",
+        "stddef.h": "c",
+        "idt.h": "c",
+        "interrupt.h": "c",
+        "keyboard.h": "c",
+        "portio.h": "c",
+        "framebuffer.h": "c",
+        "string.h": "c",
+        "stdbool.h": "c",
+        "stdint.h": "c",
+        "fat32.h": "c",
+        "typeinfo": "c",
+        "paging.h": "c",
+        "disk.h": "c",
+        "compare": "c",
+        "stdio.h": "c"
+    },
 }
